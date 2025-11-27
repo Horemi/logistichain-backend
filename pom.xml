@@ -18,9 +18,9 @@
 
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        
+
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <lombok.version>1.18.24</lombok.version>
+        <lombok.version>1.18.30</lombok.version>
         <mysql.version>8.0.33</mysql.version>
     </properties>
 
