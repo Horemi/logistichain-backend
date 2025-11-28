@@ -14,15 +14,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Desactiva CSRF (necesario si usas JWT)
+                .csrf(AbstractHttpConfigurer::disable) // Desactiva CSRF (necesario para JWT)
                 .authorizeHttpRequests(auth -> auth
+                        // Permitimos la ruta del login tal cual está en el AuthController
+                        .requestMatchers("/auth/**").permitAll()
+
+                        // Mantenemos /api/auth/** por si acaso cambias el código luego
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // Permitimos el registro de usuarios
+                        .requestMatchers("/api/usuarios/**").permitAll()
+
+                        // Permitimos Swagger para que puedas probar
                         .requestMatchers(
-                                "/api/auth/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/api/usuarios/**"  // <--- ¡AGREGA ESTA LÍNEA! (Para poder registrarte)
+                                "/swagger-ui.html"
                         ).permitAll()
+
+                        // Todo lo demás requiere token
                         .anyRequest().authenticated()
                 );
 

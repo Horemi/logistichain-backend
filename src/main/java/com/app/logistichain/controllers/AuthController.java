@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/auth") // <--- ESTO define la ruta base. Por eso usamos /auth/login
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class AuthController {
@@ -36,23 +36,16 @@ public class AuthController {
         // 3. Generar el token JWT
         String token = jwtService.generateToken(usuario);
 
-        // 4. CONVERSIÓN: Transformamos los roles (Set<Rol>) a una lista de texto (List<String>)
-        // Esto soluciona el error de "incompatible types"
+        // 4. Transformar roles
         List<String> rolesStr = usuario.getRoles().stream()
-                .map(rol -> rol.getNombre().toString()) // Asegúrate que tu entidad Rol tenga .getNombre()
+                .map(rol -> rol.getNombre().toString())
                 .collect(Collectors.toList());
 
         // 5. Crear la respuesta
         LoginResponse response = new LoginResponse();
         response.setToken(token);
         response.setNombreUsuario(usuario.getNombreUsuario());
-
-        // Aquí asignamos la lista convertida, NO el set original
         response.setRoles(rolesStr);
-
-        // Si tu LoginResponse tiene campos para ID o Email, puedes descomentar esto:
-        // response.setId(usuario.getId());
-        // response.setEmail(usuario.getEmail());
 
         return ResponseEntity.ok(response);
     }
