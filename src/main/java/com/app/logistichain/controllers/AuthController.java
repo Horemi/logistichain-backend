@@ -37,13 +37,9 @@ public class AuthController {
         // 3. Generar el token JWT
         String token = jwtService.generateToken(usuario);
 
-        // 4. Conversión segura de roles
+        // 4. Por ahora: NO LEEMOS usuario.getRoles() (para evitar el error de Hibernate)
+        //    Dejamos la lista vacía. Más adelante podemos arreglar bien el fetch de roles.
         List<String> rolesStr = new ArrayList<>();
-        if (usuario.getRoles() != null) {
-            rolesStr = usuario.getRoles().stream()
-                    .map(rol -> rol.getNombre().toString())
-                    .collect(Collectors.toList());
-        }
 
         // 5. Crear la respuesta
         LoginResponse response = new LoginResponse();
@@ -53,5 +49,6 @@ public class AuthController {
 
         return ResponseEntity.ok(response);
     }
+
 
 }
