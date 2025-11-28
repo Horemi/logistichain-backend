@@ -10,10 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.ArrayList; // Importante
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/auth") // <--- ESTO define la ruta base. Por eso usamos /auth/login
+@RequestMapping("/auth")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class AuthController {
@@ -36,18 +37,21 @@ public class AuthController {
         // 3. Generar el token JWT
         String token = jwtService.generateToken(usuario);
 
-        // 4. Transformar roles
-        List<String> rolesStr = usuario.getRoles().stream()
-                .map(rol -> rol.getNombre().toString())
-                .collect(Collectors.toList());
+        // 4. CONVERSIÓN SEGURA DE ROLES (Aquí estaba el error 500)
+        List<String> rolesStr = new ArrayList<>();
+
+        if (usuario.getRoles() != null) {
+            rolesStr = usuario.getRoles().stream()
+                    .map(rol -> rol.getNombre().toString())
+                    .collect(Collectors.toList());
+        }
 
         // 5. Crear la respuesta
         LoginResponse response = new LoginResponse();
         response.setToken(token);
         response.setNombreUsuario(usuario.getNombreUsuario());
-        response.setRoles(rolesStr);
+        response.setRoles(rolesStr); // Ahora pasamos una lista segura, nunca null
 
         return ResponseEntity.ok(response);
     }
 }
-// Cambio para forzar subida.
