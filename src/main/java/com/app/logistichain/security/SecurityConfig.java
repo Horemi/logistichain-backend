@@ -16,16 +16,13 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Desactiva CSRF (necesario si usas JWT)
                 .authorizeHttpRequests(auth -> auth
-                        // AQUÍ ESTÁ LA CORRECCIÓN:
-                        // Agregamos todas las rutas de Swagger para que sean públicas
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html"
+                                "/swagger-ui.html",
+                                "/api/usuarios/**"  // <--- ¡AGREGA ESTA LÍNEA! (Para poder registrarte)
                         ).permitAll()
-
-                        // Todo lo demás sigue requiriendo autenticación
                         .anyRequest().authenticated()
                 );
 
