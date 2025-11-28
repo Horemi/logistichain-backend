@@ -10,32 +10,14 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
+    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Desactiva CSRF (necesario para JWT)
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // Permitimos la ruta del login tal cual está en el AuthController
-                        .requestMatchers("/auth/**").permitAll()
-
-                        // Mantenemos /api/auth/** por seguridad
-                        .requestMatchers("/api/auth/**").permitAll()
-
-                        // Permitimos el registro de usuarios
-                        .requestMatchers("/api/usuarios/**").permitAll()
-
-                        // Permitimos Swagger para que puedas probar
-                        .requestMatchers(
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html"
-                        ).permitAll()
-
-                        // Todo lo demás requiere token
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll() // <--- ¡AQUÍ ESTÁ LA CLAVE! Dejamos pasar a TODOS
                 );
-
         return http.build();
     }
 }
