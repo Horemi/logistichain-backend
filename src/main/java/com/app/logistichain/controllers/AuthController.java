@@ -25,21 +25,20 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
 
-        // 1. Buscar el usuario
+        // 1. Buscar el usuario SIN lanzar excepción
         Usuario usuario = usuarioRepository.findByNombreUsuario(loginRequest.getNombreUsuario())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElse(null);
 
-        // 2. Validar contraseña
-        if (!usuario.getContrasena().equals(loginRequest.getContrasena())) {
+        // 2. Si no existe o la contraseña es incorrecta → 401, NO 500
+        if (usuario == null || !usuario.getContrasena().equals(loginRequest.getContrasena())) {
             return new ResponseEntity<>("Credenciales incorrectas", HttpStatus.UNAUTHORIZED);
         }
 
         // 3. Generar el token JWT
         String token = jwtService.generateToken(usuario);
 
-        // 4. CONVERSIÓN SEGURA DE ROLES (Aquí estaba el error 500)
+        // 4. Conversión segura de roles
         List<String> rolesStr = new ArrayList<>();
-
         if (usuario.getRoles() != null) {
             rolesStr = usuario.getRoles().stream()
                     .map(rol -> rol.getNombre().toString())
@@ -50,8 +49,9 @@ public class AuthController {
         LoginResponse response = new LoginResponse();
         response.setToken(token);
         response.setNombreUsuario(usuario.getNombreUsuario());
-        response.setRoles(rolesStr); // Ahora pasamos una lista segura, nunca null
+        response.setRoles(rolesStr);
 
         return ResponseEntity.ok(response);
     }
+
 }
