@@ -19,7 +19,7 @@ public class SecurityConfig {
                         // Permitimos la ruta del login tal cual está en el AuthController
                         .requestMatchers("/auth/**").permitAll()
 
-                        // Mantenemos /api/auth/** por si acaso cambias el código luego
+                        // Mantenemos /api/auth/** por seguridad
                         .requestMatchers("/api/auth/**").permitAll()
 
                         // Permitimos el registro de usuarios
@@ -39,3 +39,4 @@ public class SecurityConfig {
         return http.build();
     }
 }
+// Actualización forzada de seguridad para Railway
